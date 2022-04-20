@@ -5,10 +5,10 @@ In SystemVerilog -- Takes in configuration settings and data to be represented a
 Master Clock
 
 Reset
-## For Controlling PWM Frequency
-PWM Max Count
 
-Triangle Step Size
+PWM Max Count //for controlling pwm frequency
+
+Triangle Step Size //for controlling pwm frequency
 
 
 Phase Count
