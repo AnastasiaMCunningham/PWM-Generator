@@ -6,9 +6,9 @@ Master Clock
 
 Reset
 
-PWM Max Count //for controlling pwm frequency
+PWM Max Count (for controlling pwm frequency)
 
-Triangle Step Size //for controlling pwm frequency
+Triangle Step Size (for controlling pwm frequency)
 
 
 Phase Count
