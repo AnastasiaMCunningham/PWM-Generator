@@ -3,14 +3,20 @@ In SystemVerilog -- Takes in configuration settings and data to be represented a
 
 # Configurable Settings
 Master Clock
+
 Reset
 ## For Controlling PWM Frequency
 PWM Max Count
+
 Triangle Step Size
 
 
 Phase Count
+
 Interleave Count
+
 Triangle Compare Level Count
+
 Dead Time Count
+
 (more tbd)
