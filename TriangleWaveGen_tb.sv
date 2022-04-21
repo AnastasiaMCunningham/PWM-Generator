@@ -23,11 +23,13 @@
 module TriangleWaveGen_tb(
     );
     
-    reg MClk, RstN, En;
-    reg [15:0] UpperLimit, LowerLimit, StepSize;
-    wire [15:0] TWave;  
+    parameter BIT_WIDTH = 16;
     
-    TriangleWaveGen uut(MClk, RstN, En, UpperLimit, LowerLimit, StepSize, TWave);
+    reg MClk, RstN, En;
+    reg [BIT_WIDTH-1:0] UpperLimit, LowerLimit, StepSize;
+    wire [BIT_WIDTH-1:0] TWave;  
+    
+    TriangleWaveGen #(BIT_WIDTH) uut(MClk, RstN, En, UpperLimit, LowerLimit, StepSize, TWave);
     
     always begin
         MClk = 1'b1;

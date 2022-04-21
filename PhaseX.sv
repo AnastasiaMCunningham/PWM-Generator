@@ -22,21 +22,22 @@
 
 module PhaseX #(
     parameter InterleaveCount = 4,
-    parameter LevelCount = 2
+    parameter LevelCount = 2,
+    parameter BIT_WIDTH = 16
 )
 (
     input MClk,
     input RstN,
-    input [15:0] Compare,
-    input [15:0] PWMMaxCount,
-    input [15:0] TriangleStepSize,
-    input [15:0] DeadTimeCount,
+    input [BIT_WIDTH-1:0] Compare,
+    input [BIT_WIDTH-1:0] PWMMaxCount,
+    input [BIT_WIDTH-1:0] TriangleStepSize,
+    input [BIT_WIDTH-1:0] DeadTimeCount,
     output [(InterleaveCount*LevelCount*2)-1:0] S
     );
 
     generate 
-        for (i=0; i < InterleaveCount; i = i+1) begin
-            InterleaveX #(LevelCount) iX (MClk, RstN, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S[((i+1)*(LevelCount*2))-1:(i*LevelCount*2)]);
+        for (genvar i=0; i < InterleaveCount; i = i+1) begin
+            InterleaveX #(LevelCount, BIT_WIDTH) iX (MClk, RstN, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S[((i+1)*(LevelCount*2))-1:(i*LevelCount*2)]);
         end
     endgenerate
 

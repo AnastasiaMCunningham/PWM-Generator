@@ -22,12 +22,14 @@
 
 module Counter_tb;
 
-    reg MClk, Enable;
-    reg [15:0] MaxCount;
-    wire Done;
-    wire [15:0] Count;
+    parameter BIT_WIDTH = 16;
     
-    Counter uut(MClk, Enable, MaxCount, Done, Count);
+    reg MClk, Enable;
+    reg [BIT_WIDTH-1:0] MaxCount;
+    wire Done;
+    wire [BIT_WIDTH-1:0] Count;
+    
+    Counter #(BIT_WIDTH) uut(MClk, Enable, MaxCount, Done, Count);
     
     always begin
         MClk = 1'b1;

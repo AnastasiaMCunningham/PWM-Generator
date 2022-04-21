@@ -20,11 +20,13 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module DeadTimer 
+module DeadTimer #(
+    parameter BIT_WIDTH = 16
+)
 (
     input MClk,
     input RstN,
-    input [15:0] DeadTimeCount,
+    input [BIT_WIDTH-1:0] DeadTimeCount,
     input [1:0] SPDT,
     output [1:0] S
     );
@@ -32,7 +34,7 @@ module DeadTimer
     logic [1:0] SLast; //previous clock's SPDT
     logic DTDn = 0;
     logic DTEn = 0;
-    logic [1:0] SReg = {0, 0};
+    logic [1:0] SReg = {1'b0, 1'b0};
     
     Counter dtCntr(.MClk(MClk), .Enable(DTEn), .MaxCount(DeadTimeCount), .Done(DTDn), .Count());
 
@@ -42,7 +44,7 @@ module DeadTimer
         if (~RstN) begin
             SLast <= SPDT;
             DTEn <= 0;
-            SReg <= {0, 0};
+            SReg <= {1'b0, 1'b0};
         end
         else begin           
             if (SLast != SPDT & DeadTimeCount > 0) begin //if DeadTimeCount = 0, this logic must be skipped
@@ -52,7 +54,7 @@ module DeadTimer
                     SLast <= SPDT;
                 end
                 else begin
-                    SReg <= {0, 0}; //hold both PWM signals low
+                    SReg <= {1'b0, 1'b0}; //hold both PWM signals low
                     DTEn <= 1; //enable Dead Time Counter
                 end
             end

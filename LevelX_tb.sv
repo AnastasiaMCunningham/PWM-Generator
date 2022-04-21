@@ -24,13 +24,14 @@ module LevelX_tb;
 
     parameter LevelCount = 2;
     parameter Level = 1; //varies from 0 to LevelCount-1
+    parameter BIT_WIDTH = 16;
 
     logic MClk, RstN;
-    logic [15:0] Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount;
+    logic [BIT_WIDTH-1:0] Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount;
     logic [1:0] S; //PWM output and inverse
     
     
-    LevelX #(LevelCount, Level) uut(MClk, RstN, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S);
+    LevelX #(LevelCount, BIT_WIDTH) uut(MClk, RstN, Level, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S);
     
     always begin
         MClk = 1'b1;

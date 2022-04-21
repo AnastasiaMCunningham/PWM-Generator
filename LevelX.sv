@@ -20,26 +20,28 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module LevelX#(
+module LevelX #(
     parameter LevelCount = 2,
-    parameter Level = 1 //varies from 0 to LevelCount-1
+    parameter BIT_WIDTH = 16
+//    parameter Level = 1 //varies from 0 to LevelCount-1
 )
 (
     input MClk,
     input RstN,
-    input [15:0] Compare,
-    input [15:0] PWMMaxCount,
-    input [15:0] TriangleStepSize,
-    input [15:0] DeadTimeCount,
+    input [BIT_WIDTH-1:0] Level,
+    input [BIT_WIDTH-1:0] Compare,
+    input [BIT_WIDTH-1:0] PWMMaxCount,
+    input [BIT_WIDTH-1:0] TriangleStepSize,
+    input [BIT_WIDTH-1:0] DeadTimeCount,
     output [1:0] S //PWM output and inverse
     );
     
-    logic [15:0] UpperLimit = PWMMaxCount;
-    logic [15:0] LowerLimit = 0;
-    logic [15:0] TWave = 0;
+    logic [BIT_WIDTH-1:0] UpperLimit = PWMMaxCount;
+    logic [BIT_WIDTH-1:0] LowerLimit = 0;
+    logic [BIT_WIDTH-1:0] TWave = 0;
     logic  [1:0] SPDT; // S Pre-Dead Time
-    logic [15:0] divisor = PWMMaxCount;
-    logic [15:0] divResult = 0;
+    logic [BIT_WIDTH-1:0] divisor = PWMMaxCount;
+    logic [BIT_WIDTH-1:0] divResult = 0;
     logic TWaveEn = 0;
     logic TWaveEnFlag = 0;
     logic DivDoneFlag = 0;
@@ -79,13 +81,13 @@ module LevelX#(
 
     
     //Generate Triangle Wave(TWave) based on UpperLimit and Lower Limit
-    TriangleWaveGen trigen (.MClk(MClk), .RstN(RstN), .En(TWaveEn), .UpperLimit(UpperLimit), .LowerLimit(LowerLimit), .StepSize(TriangleStepSize), .TWave(TWave));
+    TriangleWaveGen #(BIT_WIDTH) trigen (.MClk(MClk), .RstN(RstN), .En(TWaveEn), .UpperLimit(UpperLimit), .LowerLimit(LowerLimit), .StepSize(TriangleStepSize), .TWave(TWave));
 
     //Compare Compare input to TWave to get S1 Pre-DeadTime
     assign SPDT[0] = (Compare > TWave); 
     assign SPDT[1] = ~SPDT[0];
     
     //Pass S1 through DeadTimer to get S2
-    DeadTimer dt (MClk, RstN, DeadTimeCount, SPDT, S); 
+    DeadTimer #(BIT_WIDTH) dt (MClk, RstN, DeadTimeCount, SPDT, S); 
     
 endmodule

@@ -20,16 +20,19 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module Counter
+module Counter #(
+
+    parameter BIT_WIDTH = 16
+)
 (
     input MClk,
     input Enable,
-    input [15:0] MaxCount,
+    input [BIT_WIDTH-1:0] MaxCount,
     output Done,
-    output [15:0] Count
+    output [BIT_WIDTH-1:0] Count
 );
 
-    logic [15:0] CountReg = 0;
+    logic [BIT_WIDTH-1:0] CountReg = 0;
     logic DoneReg = 0;
     
     assign Done = DoneReg;

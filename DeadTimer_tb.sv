@@ -21,13 +21,14 @@
 
 
 module DeadTimer_tb;
-
+    
+    parameter BIT_WIDTH = 16;
     logic MClk, RstN;
-    logic [15:0] DeadTimeCount;
+    logic [BIT_WIDTH-1:0] DeadTimeCount;
     logic [1:0] SPDT;
     logic [1:0] S;
     
-    DeadTimer uut(MClk, RstN, DeadTimeCount, SPDT, S);
+    DeadTimer #(BIT_WIDTH) uut(MClk, RstN, DeadTimeCount, SPDT, S);
     
     always begin
         MClk = 1'b1;

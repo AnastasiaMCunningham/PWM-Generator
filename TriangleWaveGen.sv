@@ -20,17 +20,20 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module TriangleWaveGen(
+module TriangleWaveGen#(
+    parameter BIT_WIDTH = 16
+)
+(
     input MClk,
     input RstN,
     input En,
-    input [15:0] UpperLimit,
-    input [15:0] LowerLimit,
-    input [15:0] StepSize,
-    output [15:0] TWave
+    input [BIT_WIDTH-1:0] UpperLimit,
+    input [BIT_WIDTH-1:0] LowerLimit,
+    input [BIT_WIDTH-1:0] StepSize,
+    output [BIT_WIDTH-1:0] TWave
     );
 
-    logic [15:0] TWaveReg = LowerLimit; //Start from bottom
+    logic [BIT_WIDTH-1:0] TWaveReg = LowerLimit; //Start from bottom
     logic UpDn = 1; //Start counting up
     
     assign TWave = TWaveReg;
