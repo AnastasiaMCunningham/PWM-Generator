@@ -23,9 +23,10 @@
 module TriangleWaveGen(
     input MClk,
     input RstN,
+    input En,
     input [15:0] UpperLimit,
     input [15:0] LowerLimit,
-    input [15:0] TriangleStepSize,
+    input [15:0] StepSize,
     output [15:0] TWave
     );
 
@@ -35,27 +36,27 @@ module TriangleWaveGen(
     assign TWave = TWaveReg;
     
     always_ff @ (posedge MClk) begin
-        if(~RstN) begin
+        if(~RstN | ~En) begin
             TWaveReg <= LowerLimit;
             UpDn <= 1;
         end
         else begin
             if(UpDn) begin //counting up
-                if(TWaveReg + TriangleStepSize > UpperLimit) begin //overflow detection
-                    TWaveReg <= UpperLimit - (TriangleStepSize - (UpperLimit - TWaveReg)); //overflow of TWaveReg is subtracted from upper limit
+                if(TWaveReg + StepSize > UpperLimit) begin //overflow detection
+                    TWaveReg <= UpperLimit - (StepSize - (UpperLimit - TWaveReg)); //overflow of TWaveReg is subtracted from upper limit
                     UpDn <= 0; //change direction
                 end
                 else begin
-                    TWaveReg <= TWaveReg+TriangleStepSize;
+                    TWaveReg <= TWaveReg+StepSize;
                 end            
             end
             else begin //counting down
-                if(TWaveReg - LowerLimit < TriangleStepSize) begin //underflow detection
-                    TWaveReg <= TriangleStepSize - (TWaveReg - LowerLimit) + LowerLimit; //underflow of TWaveReg is added to lower limit for new TWaveReg
+                if(TWaveReg - LowerLimit < StepSize) begin //underflow detection
+                    TWaveReg <= StepSize - (TWaveReg - LowerLimit) + LowerLimit; //underflow of TWaveReg is added to lower limit for new TWaveReg
                     UpDn <= 1; //change direction
                 end
                 else begin
-                    TWaveReg <= TWaveReg-TriangleStepSize;            
+                    TWaveReg <= TWaveReg-StepSize;            
                 end
             end        
         end

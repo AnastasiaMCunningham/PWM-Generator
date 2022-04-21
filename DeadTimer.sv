@@ -32,28 +32,32 @@ module DeadTimer
     logic [1:0] SLast; //previous clock's SPDT
     logic DTDn = 0;
     logic DTEn = 0;
+    logic [1:0] SReg = {0, 0};
     
-    Counter dtCntr(.MClk(MClk), .Enable(DTEn), .MaxCount(DeadTimeCount), .Done(DTDn));
+    Counter dtCntr(.MClk(MClk), .Enable(DTEn), .MaxCount(DeadTimeCount), .Done(DTDn), .Count());
+
+    assign S = SReg;
 
     always_ff @ (posedge MClk) begin
         if (~RstN) begin
             SLast <= SPDT;
             DTEn <= 0;
-            DTDn <= 0;
+            SReg <= {0, 0};
         end
         else begin           
             if (SLast != SPDT & DeadTimeCount > 0) begin //if DeadTimeCount = 0, this logic must be skipped
                 if(DTDn) begin //check for Dead Time Counter done signal (should always fail for the first pass)
                     DTEn <= 0;
-                    S <= SPDT;
+                    SReg <= SPDT;
+                    SLast <= SPDT;
                 end
                 else begin
-                    S <= {0, 0}; //hold both PWM signals low
+                    SReg <= {0, 0}; //hold both PWM signals low
                     DTEn <= 1; //enable Dead Time Counter
                 end
             end
             else begin
-                S <= SPDT;
+                SReg <= SPDT;
                 SLast <= SPDT;
             end
         end    

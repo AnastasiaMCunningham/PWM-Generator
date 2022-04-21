@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 04/20/2022 05:59:01 PM
+// Create Date: 04/21/2022 08:38:47 AM
 // Design Name: 
-// Module Name: TriangleWaveGen_tb
+// Module Name: Counter_tb
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,14 +20,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module TriangleWaveGen_tb(
-    );
+module Counter_tb;
+
+    reg MClk, Enable;
+    reg [15:0] MaxCount;
+    wire Done;
+    wire [15:0] Count;
     
-    reg MClk, RstN, En;
-    reg [15:0] UpperLimit, LowerLimit, StepSize;
-    wire [15:0] TWave;  
-    
-    TriangleWaveGen uut(MClk, RstN, En, UpperLimit, LowerLimit, StepSize, TWave);
+    Counter uut(MClk, Enable, MaxCount, Done, Count);
     
     always begin
         MClk = 1'b1;
@@ -37,15 +37,12 @@ module TriangleWaveGen_tb(
     end
     
     always@(posedge MClk) begin
-        RstN = 0;
-        En = 1;
-        UpperLimit = 500;
-        LowerLimit = 250;
-        StepSize = 3;
+        Enable = 0;
+        MaxCount = 500;
         
         #100;
         
-        RstN = 1;
+        Enable = 1;
         
         #1000000
     

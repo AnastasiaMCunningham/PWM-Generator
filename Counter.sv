@@ -25,22 +25,27 @@ module Counter
     input MClk,
     input Enable,
     input [15:0] MaxCount,
-    output Done
+    output Done,
+    output [15:0] Count
 );
 
-    logic [15:0] count = 0;
+    logic [15:0] CountReg = 0;
+    logic DoneReg = 0;
+    
+    assign Done = DoneReg;
+    assign Count = CountReg;
     
     always_ff @ (posedge MClk) begin
         if (~Enable) begin
-            count <= 0;
-            Done <= 0;
+            CountReg <= 0;
+            DoneReg <= 0;
         end
         else begin
-            if (count >= MaxCount) begin
-                Done <= 1;
+            if (CountReg >= MaxCount-1) begin
+                DoneReg <= 1;
             end
             else begin
-                count <= count+1;
+                CountReg <= CountReg+1;
             end
         end
     end

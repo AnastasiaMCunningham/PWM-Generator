@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date: 04/20/2022 05:59:01 PM
+// Create Date: 04/21/2022 08:38:47 AM
 // Design Name: 
-// Module Name: TriangleWaveGen_tb
+// Module Name: DeadTimer_tb
 // Project Name: 
 // Target Devices: 
 // Tool Versions: 
@@ -20,14 +20,14 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 
-module TriangleWaveGen_tb(
-    );
+module DeadTimer_tb;
+
+    logic MClk, RstN;
+    logic [15:0] DeadTimeCount;
+    logic [1:0] SPDT;
+    logic [1:0] S;
     
-    reg MClk, RstN, En;
-    reg [15:0] UpperLimit, LowerLimit, StepSize;
-    wire [15:0] TWave;  
-    
-    TriangleWaveGen uut(MClk, RstN, En, UpperLimit, LowerLimit, StepSize, TWave);
+    DeadTimer uut(MClk, RstN, DeadTimeCount, SPDT, S);
     
     always begin
         MClk = 1'b1;
@@ -37,15 +37,26 @@ module TriangleWaveGen_tb(
     end
     
     always@(posedge MClk) begin
-        RstN = 0;
-        En = 1;
-        UpperLimit = 500;
-        LowerLimit = 250;
-        StepSize = 3;
+        RstN = 1'b0;
+        DeadTimeCount = 5;
+        SPDT = {1'b0, 1'b0};
         
         #100;
         
-        RstN = 1;
+        RstN = 1'b1;
+        
+        #100;
+        
+        SPDT = {1'b1, 1'b0};
+        
+        #1000;
+        
+        SPDT = {1'b0, 1'b1};
+        
+        #1000;
+        
+        RstN = 1'b0;
+        
         
         #1000000
     
@@ -53,4 +64,5 @@ module TriangleWaveGen_tb(
     $stop;
     end
     
+
 endmodule

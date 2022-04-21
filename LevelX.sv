@@ -37,17 +37,49 @@ module LevelX#(
     logic [15:0] UpperLimit = PWMMaxCount;
     logic [15:0] LowerLimit = 0;
     logic [15:0] TWave = 0;
-    logic [15:0] TWaveRange = PWMMaxCount;
-    logic [1:0] SPDT; //S Pre-Dead Time
+    logic  [1:0] SPDT; // S Pre-Dead Time
+    logic [15:0] divisor = PWMMaxCount;
+    logic [15:0] divResult = 0;
+    logic TWaveEn = 0;
+    logic TWaveEnFlag = 0;
+    logic DivDoneFlag = 0;
+    
     
     //Calculate UpperLimit and LowerLimit based on Level, LevelCount, and PWMMaxCount
-    assign TWaveRange = PWMMaxCount/LevelCount; //Use module, not good practice to use /
-    assign LowerLimit = Level*TWaveRange;
-    assign UpperLimit = ((Level+1)*TWaveRange)-1;
+    //-- TWaveRange = PWMMaxCount/LevelCount;
+    always@(*) begin
+        if(~RstN) begin
+            divisor <= PWMMaxCount;
+            divResult <= 0;
+            DivDoneFlag <= 0;
+        end
+        else begin
+            if(divisor >= LevelCount) begin
+                divisor <= divisor - LevelCount;
+                divResult <= divResult+1;
+                DivDoneFlag <= 0;
+            end
+            else begin
+                DivDoneFlag <= 1;
+            end
+        end
+    end
+    
+    always_ff @ (posedge MClk) begin
+        if(DivDoneFlag & ~TWaveEnFlag) begin //only should be entered once per reset
+                LowerLimit = Level*divResult;
+                UpperLimit = ((Level+1)*divResult)-1;
+                TWaveEn <= 0;
+                TWaveEnFlag <= 1;
+        end
+        else if (TWaveEnFlag) begin
+            TWaveEn <= 1;
+        end
+    end
 
     
     //Generate Triangle Wave(TWave) based on UpperLimit and Lower Limit
-    TriangleWaveGen trigen (MClk, RstN, UpperLimit, LowerLimit, TriangleStepSize, TWave);
+    TriangleWaveGen trigen (.MClk(MClk), .RstN(RstN), .En(TWaveEn), .UpperLimit(UpperLimit), .LowerLimit(LowerLimit), .StepSize(TriangleStepSize), .TWave(TWave));
 
     //Compare Compare input to TWave to get S1 Pre-DeadTime
     assign SPDT[0] = (Compare > TWave); 
