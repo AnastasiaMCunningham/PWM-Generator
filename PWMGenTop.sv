@@ -30,7 +30,7 @@ module PWMGenTop #(
     input MClk,
     input RstN,
     input [BIT_WIDTH-1:0] Compare,
-    input [BIT_WIDTH-1:0] PWMMaxCount,
+    input [BIT_WIDTH-1:0] PWMMaxCount, //Do not change without issuing a reset!
     input [BIT_WIDTH-1:0] TriangleStepSize,
     input [BIT_WIDTH-1:0] DeadTimeCount,
     output [(PhaseCount*InterleaveCount*LevelCount*2)-1:0] S

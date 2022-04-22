@@ -34,10 +34,12 @@ module PhaseX #(
     input [BIT_WIDTH-1:0] DeadTimeCount,
     output [(InterleaveCount*LevelCount*2)-1:0] S
     );
+    
+    logic [BIT_WIDTH-1:0] Interleave [0:15] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15}; //convert to non-hardcoded if possible
 
     generate 
         for (genvar i=0; i < InterleaveCount; i = i+1) begin
-            InterleaveX #(LevelCount, BIT_WIDTH) iX (MClk, RstN, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S[((i+1)*(LevelCount*2))-1:(i*LevelCount*2)]);
+            InterleaveX #(InterleaveCount, LevelCount, BIT_WIDTH) iX (MClk, RstN, Interleave[i], Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S[((i+1)*(LevelCount*2))-1:(i*LevelCount*2)]);
         end
     endgenerate
 
