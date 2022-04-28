@@ -29,7 +29,7 @@ module PWMGenTop #(
 (
     input MClk,
     input RstN,
-    input [BIT_WIDTH-1:0] Compare,
+    input [BIT_WIDTH-1:0] Compare [PhaseCount-1:0],
     input [BIT_WIDTH-1:0] PWMMaxCount, //Do not change without issuing a reset!
     input [BIT_WIDTH-1:0] TriangleStepSize,
     input [BIT_WIDTH-1:0] DeadTimeCount,
@@ -38,7 +38,7 @@ module PWMGenTop #(
 
     generate 
         for (genvar i=0; i < PhaseCount; i = i+1) begin
-            PhaseX #(InterleaveCount, LevelCount, BIT_WIDTH) pX (MClk, RstN, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S[((i+1)*(InterleaveCount*LevelCount*2))-1:(i*InterleaveCount*LevelCount*2)]);
+            PhaseX #(InterleaveCount, LevelCount, BIT_WIDTH) pX (MClk, RstN, Compare[i], PWMMaxCount, TriangleStepSize, DeadTimeCount, S[((i+1)*(InterleaveCount*LevelCount*2))-1:(i*InterleaveCount*LevelCount*2)]);
         end
     endgenerate
 
