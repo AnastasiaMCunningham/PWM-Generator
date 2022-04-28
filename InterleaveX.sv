@@ -78,7 +78,7 @@ module InterleaveX #(
             IntDoneFlag <= 0;
             MultDoneFlag <= 1;
         end
-        else if (MultDoneFlag) begin
+        else if (MultDoneFlag) begin //added clock after InterleaveOffset assigned
             IntDoneFlag <= 1;
         end
     end    
