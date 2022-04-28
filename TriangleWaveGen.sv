@@ -42,12 +42,12 @@ module TriangleWaveGen#(
 
     always_comb begin
         if(LowerLimit + InterleaveOffset > UpperLimit) begin
-            assign StartVal = UpperLimit - (LowerLimit + InterleaveOffset - UpperLimit); //change direction by subtracting overflow amount by UpperLimit
-            assign StartDir = 0; //counting down
+            StartVal = UpperLimit - (LowerLimit + InterleaveOffset - UpperLimit); //change direction by subtracting overflow amount by UpperLimit
+            StartDir = 0; //counting down
         end
         else begin
-            assign StartVal = LowerLimit + InterleaveOffset;
-            assign StartDir = 1; //counting up
+            StartVal = LowerLimit + InterleaveOffset;
+            StartDir = 1; //counting up
         end
     end
 

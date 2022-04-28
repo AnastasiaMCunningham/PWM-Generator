@@ -39,7 +39,7 @@ module LevelX #(
     
     logic [BIT_WIDTH-1:0] UpperLimit = PWMMaxCount;
     logic [BIT_WIDTH-1:0] LowerLimit = 0;
-    logic [BIT_WIDTH-1:0] TWave = 0;
+    logic [BIT_WIDTH-1:0] TWave;
     logic  [1:0] SPDT; // S Pre-Dead Time
     logic [BIT_WIDTH-1:0] divisor = PWMMaxCount;
     logic [BIT_WIDTH-1:0] divResult = 0;

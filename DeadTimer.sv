@@ -32,7 +32,7 @@ module DeadTimer #(
     );
 
     logic [1:0] SLast; //previous clock's SPDT
-    logic DTDn = 0;
+    logic DTDn;
     logic DTEn = 0;
     logic [1:0] SReg = {1'b0, 1'b0};
     
