@@ -26,10 +26,10 @@ module TriangleWaveGen_tb(
     parameter BIT_WIDTH = 16;
     
     reg MClk, RstN, En;
-    reg [BIT_WIDTH-1:0] UpperLimit, LowerLimit, StepSize;
+    reg [BIT_WIDTH-1:0] UpperLimit, LowerLimit, StepSize, InterleaveOffset;
     wire [BIT_WIDTH-1:0] TWave;  
     
-    TriangleWaveGen #(BIT_WIDTH) uut(MClk, RstN, En, UpperLimit, LowerLimit, StepSize, TWave);
+    TriangleWaveGen #(BIT_WIDTH) uut(MClk, RstN, En, UpperLimit, LowerLimit, StepSize, InterleaveOffset, TWave);
     
     always begin
         MClk = 1'b1;
@@ -41,6 +41,7 @@ module TriangleWaveGen_tb(
     always@(posedge MClk) begin
         RstN = 0;
         En = 1;
+        InterleaveOffset = 50;
         UpperLimit = 500;
         LowerLimit = 250;
         StepSize = 3;

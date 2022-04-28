@@ -28,7 +28,8 @@ module PWMGenTop_tb;
     parameter BIT_WIDTH = 16;
 
     logic MClk, RstN;
-    logic [BIT_WIDTH-1:0] Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount;
+    logic [BIT_WIDTH-1:0] Compare [PhaseCount-1:0];
+    logic [BIT_WIDTH-1:0] PWMMaxCount, TriangleStepSize, DeadTimeCount;
     logic [(PhaseCount*InterleaveCount*LevelCount*2)-1:0] S;
     
     
@@ -43,7 +44,9 @@ module PWMGenTop_tb;
     
     always@(posedge MClk) begin
         RstN = 1'b0;
-        Compare = 300;
+        Compare[0] = 300;
+        Compare[1] = 150;
+        Compare[2] = 600;
         PWMMaxCount = 500;
         TriangleStepSize = 2;
         DeadTimeCount = 5;
@@ -53,14 +56,7 @@ module PWMGenTop_tb;
         RstN = 1'b1;
         
         #100000;
-        
-        Compare = 150;
-        
-        #100000;
-        
-        Compare = 600;
-        
-        #100000;
+       
         
         RstN = 1'b0;
         

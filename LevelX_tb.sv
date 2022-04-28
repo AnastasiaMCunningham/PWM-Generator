@@ -26,12 +26,12 @@ module LevelX_tb;
     parameter Level = 1; //varies from 0 to LevelCount-1
     parameter BIT_WIDTH = 16;
 
-    logic MClk, RstN;
-    logic [BIT_WIDTH-1:0] Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount;
+    logic MClk, RstN, IntDoneFlag;
+    logic [BIT_WIDTH-1:0] InterleaveOffset, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount;
     logic [1:0] S; //PWM output and inverse
     
     
-    LevelX #(LevelCount, BIT_WIDTH) uut(MClk, RstN, Level, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S);
+    LevelX #(LevelCount, BIT_WIDTH) uut(MClk, RstN, Level, InterleaveOffset, IntDoneFlag, Compare, PWMMaxCount, TriangleStepSize, DeadTimeCount, S);
     
     always begin
         MClk = 1'b1;
@@ -42,6 +42,8 @@ module LevelX_tb;
     
     always@(posedge MClk) begin
         RstN = 1'b0;
+        IntDoneFlag = 1'b0;
+        InterleaveOffset = 50;
         Compare = 300;
         PWMMaxCount = 500;
         TriangleStepSize = 2;
@@ -50,6 +52,10 @@ module LevelX_tb;
         #100;
         
         RstN = 1'b1;
+        
+        #300;
+        
+        IntDoneFlag = 1'b1;
         
         #100000;
         
