@@ -23,12 +23,13 @@
 module LevelX #(
     parameter LevelCount = 2,
     parameter BIT_WIDTH = 16
-//    parameter Level = 1 //varies from 0 to LevelCount-1
 )
 (
     input MClk,
     input RstN,
     input [BIT_WIDTH-1:0] Level,
+    input [BIT_WIDTH-1:0] InterleaveOffset,
+    input IntDoneFlag,
     input [BIT_WIDTH-1:0] Compare,
     input [BIT_WIDTH-1:0] PWMMaxCount,
     input [BIT_WIDTH-1:0] TriangleStepSize,
@@ -48,7 +49,8 @@ module LevelX #(
     
     
     //Calculate UpperLimit and LowerLimit based on Level, LevelCount, and PWMMaxCount
-    //-- TWaveRange = PWMMaxCount/LevelCount;
+    //-- LowerLimit = Level*PWMMaxCount/LevelCount;
+    //-- UpperLimit = ((Level+1)*PWMMaxCount/LevelCount)-1;
     always@(*) begin
         if(~RstN) begin
             divisor <= PWMMaxCount;
@@ -68,20 +70,24 @@ module LevelX #(
     end
     
     always_ff @ (posedge MClk) begin
-        if(DivDoneFlag & ~TWaveEnFlag) begin //only should be entered once per reset
-                LowerLimit = Level*divResult;
-                UpperLimit = ((Level+1)*divResult)-1;
-                TWaveEn <= 0;
-                TWaveEnFlag <= 1;
+        if(~RstN) begin
+            TWaveEn <= 0;
+            TWaveEnFlag <= 0;
         end
-        else if (TWaveEnFlag) begin
+        else if(DivDoneFlag & ~TWaveEnFlag) begin //only should be entered once per reset
+            LowerLimit <= Level*divResult; //MULT
+            UpperLimit <= ((Level+1)*divResult)-1; //MULT
+            TWaveEn <= 0;
+            TWaveEnFlag <= 1;
+        end
+        else if (TWaveEnFlag & IntDoneFlag) begin
             TWaveEn <= 1;
         end
     end
 
     
     //Generate Triangle Wave(TWave) based on UpperLimit and Lower Limit
-    TriangleWaveGen #(BIT_WIDTH) trigen (.MClk(MClk), .RstN(RstN), .En(TWaveEn), .UpperLimit(UpperLimit), .LowerLimit(LowerLimit), .StepSize(TriangleStepSize), .TWave(TWave));
+    TriangleWaveGen #(BIT_WIDTH) trigen (.MClk(MClk), .RstN(RstN), .En(TWaveEn), .UpperLimit(UpperLimit), .LowerLimit(LowerLimit), .StepSize(TriangleStepSize), .InterleaveOffset(InterleaveOffset), .TWave(TWave));
 
     //Compare Compare input to TWave to get S1 Pre-DeadTime
     assign SPDT[0] = (Compare > TWave); 

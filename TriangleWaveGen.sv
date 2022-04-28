@@ -30,18 +30,43 @@ module TriangleWaveGen#(
     input [BIT_WIDTH-1:0] UpperLimit,
     input [BIT_WIDTH-1:0] LowerLimit,
     input [BIT_WIDTH-1:0] StepSize,
+    input [BIT_WIDTH-1:0] InterleaveOffset,
     output [BIT_WIDTH-1:0] TWave
     );
 
-    logic [BIT_WIDTH-1:0] TWaveReg = LowerLimit; //Start from bottom
-    logic UpDn = 1; //Start counting up
+    //determine starting value and direction based on interleave's phase offset
+    logic [BIT_WIDTH-1:0] StartVal;
+    logic StartDir;
+    logic DelayStartFlag1 = 0; //adds up to 1 clock delay to start/reset
+    logic DelayStartFlag2 = 0; //adds 1-2 clock delay to start/reset
+
+    always_comb begin
+        if(LowerLimit + InterleaveOffset > UpperLimit) begin
+            assign StartVal = UpperLimit - (LowerLimit + InterleaveOffset - UpperLimit); //change direction by subtracting overflow amount by UpperLimit
+            assign StartDir = 0; //counting down
+        end
+        else begin
+            assign StartVal = LowerLimit + InterleaveOffset;
+            assign StartDir = 1; //counting up
+        end
+    end
+
+    logic [BIT_WIDTH-1:0] TWaveReg = StartVal;
+    logic UpDn = StartDir;
     
     assign TWave = TWaveReg;
     
     always_ff @ (posedge MClk) begin
-        if(~RstN | ~En) begin
-            TWaveReg <= LowerLimit;
-            UpDn <= 1;
+        if(~RstN | ~En | ~DelayStartFlag1) begin
+            TWaveReg <= StartVal;
+            UpDn <= StartDir;
+            DelayStartFlag1 <= 1; //Only low on start-up to initialize TWaveReg+UpDn
+            DelayStartFlag2 <= 0; //Extra delay when starting to calculate StartVal and StartDir before assigning
+        end
+        else if (~DelayStartFlag2) begin //Extra delay to reassign TWaveReg+UpDn after StartVal+StartDir calculation
+            TWaveReg <= StartVal;
+            UpDn <= StartDir;
+            DelayStartFlag2 <= 1;
         end
         else begin
             if(UpDn) begin //counting up
